@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Сертификат проверки застройщика</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ===================== ФОРМА ===================== -->
+<main id="formView" class="sheet">
+  <div class="sheet-inner">
+    <div class="deco-arc" aria-hidden="true"></div>
+
+    <header class="hero">
+      <div>
+        <div class="eyebrow">Независимая проверка сведений</div>
+        <h1>Сертификат проверки застройщика</h1>
+        <p class="lead">Структурированная оценка юридической прозрачности, задолженностей и готовности строительного объекта по 13 ключевым блокам.</p>
+      </div>
+      <div class="badge-circle" aria-hidden="true">
+        <span class="badge-num">13</span>
+        <span class="badge-cap">блоков<br>проверки</span>
+      </div>
+    </header>
+
+    <form id="checkForm" novalidate autocomplete="off">
+      <div class="meta-grid">
+        <label class="field">
+          <span class="label">Номер сертификата <i class="req">*</i></span>
+          <input type="text" id="cert_number" name="cert_number" data-required="1" data-label="Номер сертификата" placeholder="Например, ПЗ-2026-001">
+        </label>
+        <label class="field">
+          <span class="label">Дата проверки <i class="req">*</i></span>
+          <input type="date" id="check_date" name="check_date" data-required="1" data-label="Дата проверки">
+        </label>
+        <label class="field">
+          <span class="label">Цель проверки <i class="req">*</i></span>
+          <select id="purpose" name="purpose" data-required="1" data-label="Цель проверки">
+            <option value="">Выберите</option>
+            <option>Инвестиционная оценка</option>
+            <option>Покупка недвижимости</option>
+            <option>Кредитование / залог</option>
+            <option>Партнерство / подряд</option>
+            <option>Due diligence сделки</option>
+            <option>Иное</option>
+          </select>
+        </label>
+      </div>
+
+      <section class="score-panel" id="scorePanel">
+        <div class="ring" id="scoreRing">
+          <svg viewBox="0 0 120 120" aria-hidden="true">
+            <circle class="ring-bg" cx="60" cy="60" r="52"/>
+            <circle class="ring-fg" id="ringFg" cx="60" cy="60" r="52"/>
+          </svg>
+          <div class="ring-text">
+            <span id="scoreValue">0</span>
+            <small>из 50 баллов</small>
+          </div>
+        </div>
+        <div class="score-body">
+          <div class="label">Итоговый уровень надежности</div>
+          <div class="score-title" id="scoreTitle">Проверено блоков: 0 из 13</div>
+          <p class="score-note" id="scoreNote">Итоговый уровень риска появится после оценки всех блоков.</p>
+          <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+          <div class="counts">
+            <span>Подтверждено: <b id="cntOk">0</b></span>
+            <span>С замечаниями: <b id="cntWarn">0</b></span>
+            <span>Риск: <b id="cntRisk">0</b></span>
+            <span>Не проверено: <b id="cntNone">13</b></span>
+          </div>
+        </div>
+      </section>
+
+      <div class="section-head">
+        <h2>Карточка проверки</h2>
+        <p>Для каждого блока укажите данные, дату проверки, источник и итоговый статус. Поля со <i class="req">*</i> обязательны.</p>
+      </div>
+
+      <div class="blocks" id="blocks"></div>
+
+      <section class="conclusion">
+        <h2>Заключение проверяющего</h2>
+        <div class="fields cols-3">
+          <label class="field">
+            <span class="label">Подтвержденные сильные стороны <i class="req">*</i></span>
+            <textarea name="strengths" id="strengths" rows="4" data-required="1" data-label="Подтвержденные сильные стороны" placeholder="Ключевые подтвержденные факты"></textarea>
+          </label>
+          <label class="field">
+            <span class="label">Выявленные риски <i class="req">*</i></span>
+            <textarea name="risks" id="risks" rows="4" data-required="1" data-label="Выявленные риски" placeholder="Юридические, финансовые и строительные риски"></textarea>
+          </label>
+          <label class="field">
+            <span class="label">Что запросить до заключения договора</span>
+            <textarea name="requests" id="requests" rows="4" data-label="Что запросить до заключения договора" placeholder="Документы и действия для снятия рисков"></textarea>
+          </label>
+          <label class="field full">
+            <span class="label">Итоговая рекомендация <i class="req">*</i></span>
+            <select name="recommendation" id="recommendation" data-required="1" data-label="Итоговая рекомендация">
+              <option value="">Выберите</option>
+              <option>Рекомендуется к сотрудничеству</option>
+              <option>Рекомендуется при условии устранения замечаний</option>
+              <option>Не рекомендуется до устранения критических рисков</option>
+              <option>Не рекомендуется</option>
+            </select>
+            <span class="hint" id="recHint"></span>
+          </label>
+        </div>
+
+        <div class="sign-grid">
+          <label class="sign-field">
+            <span class="sign-cap">Проверку выполнил <i class="req">*</i></span>
+            <input type="text" name="reviewer" id="reviewer" data-required="1" data-label="Проверку выполнил" placeholder="ФИО, должность, организация">
+          </label>
+          <label class="sign-field">
+            <span class="sign-cap">Подпись и печать</span>
+            <input type="text" name="sign_note" id="sign_note" data-label="Подпись и печать" placeholder="Место для подписи и печати (необязательно)">
+          </label>
+        </div>
+      </section>
+
+      <div class="errors" id="errors" hidden></div>
+
+      <div class="actions">
+        <div class="actions-left">
+          <button type="button" class="btn ghost" id="btnDemo">Заполнить пример</button>
+          <button type="button" class="btn ghost" id="btnReset">Очистить форму</button>
+        </div>
+        <button type="submit" class="btn primary" id="btnMake">Сформировать сертификат</button>
+      </div>
+
+      <footer class="disclaimer">
+        <p>Оценка отражает сведения, доступные на дату проверки, и зависит от полноты представленных документов.</p>
+        <p>Сертификат не является государственной гарантией, разрешением на строительство или заключением о юридической чистоте сделки.</p>
+      </footer>
+    </form>
+  </div>
+</main>
+
+<!-- ===================== СЕРТИФИКАТ ===================== -->
+<div id="certView" hidden>
+  <div class="toolbar">
+    <button type="button" class="btn ghost" id="btnBack">← Вернуться к редактированию</button>
+    <button type="button" class="btn primary" id="btnPrint">Печать / Сохранить PDF</button>
+  </div>
+  <div id="certificate"></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
