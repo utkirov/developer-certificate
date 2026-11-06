@@ -15,13 +15,14 @@
 <header class="topbar" id="topbar" hidden>
   <a class="brand" href="#/admin" aria-label="Alliance Group">
     <svg class="brand-logo" viewBox="0 0 460 185" aria-hidden="true"><use href="#ag-logo"></use></svg>
+    <svg class="brand-mark-only" viewBox="0 0 114 185" aria-hidden="true"><use href="#ag-logo" width="460" height="185"></use></svg>
   </a>
   <nav class="nav" aria-label="Разделы">
-    <a href="#/" data-nav="form"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Новая проверка</span></a>
-    <a href="#/admin" data-nav="admin"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Реестр</span><b class="nav-count" id="navCount" hidden></b></a>
-    <a href="#/users" data-nav="users" id="navUsers" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-7 7-7s7 3 7 7M17 4a4 4 0 010 8M22 21c0-3-1.500-5-4-6"/></svg><span>Сотрудники</span></a>
-    <a href="/verify" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.500-3 8.300-7 10-4-1.700-7-5.500-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><span>Проверить</span></a>
-    <a href="#/account" data-nav="account"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.500-7 8-7s8 3 8 7"/></svg><span id="navUser"></span></a>
+    <a href="#/" data-nav="form"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span class="l">Новая проверка</span><span class="s">Новая</span></a>
+    <a href="#/admin" data-nav="admin"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span class="l">Реестр</span><span class="s">Реестр</span><b class="nav-count" id="navCount" hidden></b></a>
+    <a href="#/users" data-nav="users" id="navUsers" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-7 7-7s7 3 7 7M17 4a4 4 0 010 8M22 21c0-3-1.500-5-4-6"/></svg><span class="l">Сотрудники</span><span class="s">Команда</span></a>
+    <a href="/verify" target="_blank" rel="noopener" title="Откроется в новой вкладке"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.500-3 8.300-7 10-4-1.700-7-5.500-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><span class="l">Проверить</span><span class="s">Проверка</span></a>
+    <a href="#/account" data-nav="account"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.500-7 8-7s8 3 8 7"/></svg><span class="l" id="navUser"></span><span class="s">Профиль</span></a>
   </nav>
 </header>
 
@@ -32,9 +33,11 @@
     <h1>Вход для сотрудников</h1>
     <form id="loginForm" novalidate>
       <label class="field"><span class="label">Электронная почта</span><input type="email" id="loginEmail" autocomplete="username" required></label>
-      <label class="field"><span class="label">Пароль</span><input type="password" id="loginPassword" autocomplete="current-password" required></label>
+      <label class="field"><span class="label">Пароль</span>
+        <span class="input-with-btn"><input type="password" id="loginPassword" autocomplete="current-password" required><button type="button" class="in-btn" id="loginShow" aria-pressed="false">Показать</button></span>
+      </label>
       <p class="login-error" id="loginError" role="alert" hidden></p>
-      <button class="btn primary" type="submit">Войти</button>
+      <button class="btn primary" type="submit" id="loginBtn">Войти</button>
     </form>
     <p class="muted login-note">Проверить подлинность документа можно без входа: <a href="/verify">страница проверки</a>.</p>
   </div>
@@ -44,23 +47,13 @@
 <main id="formView" class="view" hidden>
   <div class="sheet">
     <div class="sheet-inner">
-      <div class="deco-arc" aria-hidden="true"></div>
-
       <div class="edit-banner" id="editBanner" hidden>
         <span id="editBannerText"></span>
         <span class="edit-actions" id="editBannerActions"></span>
       </div>
 
       <header class="hero">
-        <div>
-          <div class="eyebrow">Проверка сведений Alliance Group</div>
-          <h1>Заключение о проверке застройщика</h1>
-          <p class="lead" id="heroLead"></p>
-        </div>
-        <div class="badge-circle" aria-hidden="true">
-          <span class="badge-num" id="heroCount"></span>
-          <span class="badge-cap">блоков<br>проверки</span>
-        </div>
+        <h1>Заключение о проверке застройщика</h1>
       </header>
 
       <form id="checkForm" novalidate autocomplete="off">
@@ -95,7 +88,6 @@
             <div class="label">Итоговый уровень надежности</div>
             <div class="score-title" id="scoreTitle"></div>
             <p class="score-note" id="scoreNote"></p>
-            <div class="bar"><div class="bar-fill" id="barFill"></div></div>
             <div class="counts">
               <span><i class="dot ok"></i>Подтверждено: <b id="cntOk">0</b></span>
               <span><i class="dot warn"></i>С замечаниями: <b id="cntWarn">0</b></span>

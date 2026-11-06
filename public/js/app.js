@@ -92,7 +92,7 @@
         <div class="files" data-files="${b.n}">
           <div class="files-list" id="files-${b.n}"></div>
           <label class="btn sm ghost file-add">Приложить файл
-            <input type="file" accept="application/pdf,image/jpeg,image/png,image/webp" data-upload="${b.n}" hidden>
+            <input type="file" accept="application/pdf,image/jpeg,image/png,image/webp" data-upload="${b.n}">
           </label>
         </div>
       </article>`;
@@ -103,8 +103,6 @@
     + '<a href="#conclusion" class="bn bn-end" data-n="end" title="Заключение">Итог</a>';
   META_FIELDS.forEach((f) => { if (f.options) $(`#${f.id}`).innerHTML = optionsHtml(f.options); });
   $('#recommendation').innerHTML = optionsHtml(RECOMMENDATIONS);
-  $('#heroLead').textContent = `Структурированная оценка юридической прозрачности, задолженностей, договора и готовности строительного объекта по ${BLOCKS.length} ключевым блокам.`;
-  $('#heroCount').textContent = BLOCKS.length;
 
   /* =========================================================
      Данные формы
@@ -273,6 +271,7 @@
       const chip = $(`.bn[data-n="${b.n}"]`);
       const current = chip.classList.contains('current');
       chip.className = `bn${st ? ` st-${st}` : ''}${done === total ? ' done' : ''}${card.classList.contains('has-error') ? ' err' : ''}${current ? ' current' : ''}`;
+      chip.setAttribute('aria-label', `Блок ${b.n}, ${b.title}: ${st ? STATUSES[st].label : 'не проверено'}`);
     });
 
     const docs = data[fname(12, 'docs')] || [];
@@ -291,7 +290,6 @@
     $('#ringFg').style.strokeDasharray = RING_LEN;
     $('#ringFg').style.strokeDashoffset = RING_LEN * (1 - (ev.max ? ev.score / ev.max : 0));
     const checked = BLOCKS.length - ev.counts.none;
-    $('#barFill').style.width = `${(checked / BLOCKS.length) * 100}%`;
     $('#cntOk').textContent = ev.counts.ok;
     $('#cntWarn').textContent = ev.counts.warn;
     $('#cntRisk').textContent = ev.counts.risk;
@@ -355,7 +353,7 @@
      Проверка
      ========================================================= */
   function clearErrors() {
-    $$('.invalid', form).forEach((el) => el.classList.remove('invalid'));
+    $$('.invalid', form).forEach((el) => { el.classList.remove('invalid'); el.removeAttribute('aria-invalid'); el.removeAttribute('aria-describedby'); });
     $$('.field-error', form).forEach((el) => el.remove());
     $$('.has-error', form).forEach((el) => el.classList.remove('has-error'));
     $('#errors').hidden = true;
@@ -372,7 +370,10 @@
     if (msg && el.matches('input,select,textarea')) {
       const note = document.createElement('span');
       note.className = 'field-error';
+      note.id = `err-${el.id || el.name}`;
       note.textContent = msg;
+      el.setAttribute('aria-invalid', 'true');
+      el.setAttribute('aria-describedby', note.id);
       el.insertAdjacentElement('afterend', note);
     }
     const card = el.closest('.block');
@@ -577,6 +578,13 @@
       default:
         openNew();
     }
+    if (token !== routeToken) return;
+    /* Для чтения с экрана: после смены раздела фокус переходит к его заголовку */
+    const heading = $(`${VIEWS[state.view]} h1`);
+    if (heading && !$(`${VIEWS[state.view]}`).contains(document.activeElement)) {
+      heading.tabIndex = -1;
+      heading.focus({ preventScroll: true });
+    }
   }
 
   async function updateNavCount() {
@@ -621,14 +629,29 @@
   $('#loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const err = $('#loginError');
+    const btn = $('#loginBtn');
     err.hidden = true;
+    btn.disabled = true;
+    btn.textContent = 'Входим…';
     try {
       const { user } = await api.login($('#loginEmail').value.trim(), $('#loginPassword').value);
       signedIn(user);
     } catch (ex) {
       err.textContent = ex.message;
       err.hidden = false;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Войти';
     }
+  });
+
+  $('#loginShow').addEventListener('click', (e) => {
+    const input = $('#loginPassword');
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    e.currentTarget.textContent = show ? 'Скрыть' : 'Показать';
+    e.currentTarget.setAttribute('aria-pressed', String(show));
+    input.focus();
   });
 
   /* =========================================================

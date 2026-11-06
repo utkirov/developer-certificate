@@ -11,7 +11,6 @@
       <div class="admin">
         <header class="admin-head">
           <div>
-            <div class="eyebrow">Администрирование</div>
             <h1>Сотрудники</h1>
             <p class="muted">Аналитик готовит заключения. Руководитель проверяет, выпускает и аннулирует их.</p>
           </div>
@@ -20,7 +19,7 @@
           <label class="field"><span class="label">Имя</span><input id="uName" maxlength="160" autocomplete="off"></label>
           <label class="field"><span class="label">Электронная почта</span><input id="uEmail" type="email" autocomplete="off"></label>
           <label class="field"><span class="label">Роль</span><select id="uRole"><option value="analyst">Аналитик</option><option value="manager">Руководитель</option></select></label>
-          <label class="field"><span class="label">Начальный пароль, от 10 символов</span><input id="uPass" type="password" autocomplete="new-password"></label>
+          <label class="field"><span class="label">Начальный пароль</span><input id="uPass" type="password" autocomplete="new-password" placeholder="От 10 символов"></label>
           <button class="btn primary" type="submit">Добавить</button>
         </form>
         <section class="reg-list">
@@ -66,8 +65,15 @@
           if (password === null) return;
           await api.updateUser(id, { password });
         } else if (btn.dataset.act === 'role') {
-          await api.updateUser(id, { role: user.role === 'manager' ? 'analyst' : 'manager' });
+          const role = user.role === 'manager' ? 'analyst' : 'manager';
+          const yes = await DC.dialog({ title: `Сменить роль: ${user.name}`, text: role === 'manager' ? 'Сотрудник сможет выпускать и аннулировать заключения, а также управлять сотрудниками.' : 'Сотрудник больше не сможет выпускать заключения и управлять сотрудниками.', ok: role === 'manager' ? 'Сделать руководителем' : 'Сделать аналитиком' });
+          if (!yes) return;
+          await api.updateUser(id, { role });
         } else {
+          if (user.active) {
+            const yes = await DC.dialog({ title: `Отключить: ${user.name}?`, text: 'Сотрудник не сможет войти, его текущие сеансы завершатся. Заключения останутся в реестре.', ok: 'Отключить', danger: true });
+            if (!yes) return;
+          }
           await api.updateUser(id, { active: !user.active });
         }
         DC.toast('Изменения сохранены', 'ok');
@@ -89,7 +95,7 @@
         </header>
         <form class="user-form" id="passForm" novalidate>
           <label class="field"><span class="label">Текущий пароль</span><input id="pCur" type="password" autocomplete="current-password"></label>
-          <label class="field"><span class="label">Новый пароль, от 10 символов</span><input id="pNew" type="password" autocomplete="new-password"></label>
+          <label class="field"><span class="label">Новый пароль</span><input id="pNew" type="password" autocomplete="new-password" placeholder="От 10 символов"></label>
           <button class="btn primary" type="submit">Сменить пароль</button>
         </form>
       </div>`;

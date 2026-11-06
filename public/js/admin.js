@@ -13,8 +13,8 @@
     return 'draft';
   };
   const STAGES = {
-    draft: { label: 'Черновик', cls: 'mid' },
-    review: { label: 'На проверке', cls: 'mid' },
+    draft: { label: 'Черновик', cls: '' },
+    review: { label: 'На проверке', cls: 'info' },
     issued: { label: 'Выпущено', cls: 'high' },
     revoked: { label: 'Аннулировано', cls: 'low' },
   };
@@ -61,7 +61,7 @@
     return `
       <article class="reg-row${stage === 'revoked' ? ' revoked' : ''}" data-id="${esc(r.id)}">
         <div class="reg-main">
-          <div class="reg-num">${esc(r.number || 'Без номера')} <span class="pill ${STAGES[stage].cls} mini">${STAGES[stage].label}</span>${r.hasWorking && r.number ? ' <span class="pill mid mini">есть правки</span>' : ''}</div>
+          <div class="reg-num">${esc(r.number || 'Без номера')} <span class="pill ${STAGES[stage].cls} mini">${STAGES[stage].label}</span>${r.hasWorking && r.number ? ' <span class="pill info mini">есть правки</span>' : ''}</div>
           <div class="reg-dev">${esc(r.developer || 'Застройщик не указан')}</div>
           <div class="reg-proj">${esc(r.project || 'Проект не указан')}${r.inn ? ` · ИНН ${esc(r.inn)}` : ''} · ${esc(r.ownerName)}</div>
           ${r.reviewComment ? `<div class="reg-comment">Вернули: ${esc(r.reviewComment)}</div>` : ''}
@@ -113,9 +113,7 @@
       <div class="admin">
         <header class="admin-head">
           <div>
-            <div class="eyebrow">Администрирование</div>
             <h1>Реестр заключений</h1>
-            <p class="muted">Все заключения Alliance Group: черновики, выпущенные редакции и их статус. Данные хранятся на сервере и доступны сотрудникам после входа.</p>
           </div>
           <div class="admin-cta">
             <a class="btn primary" href="#/">+ Новая проверка</a>
@@ -126,8 +124,8 @@
           ${statTile('Выпущено', st.issued, '', `аннулировано: ${st.revoked} · в работе: ${st.work}`)}
           ${statTile('Средний результат', `${fmtScore(Math.round(st.avg * 100))}%`, '', 'от применимых баллов')}
           ${statTile('Высокая надежность', st.high, 'lv-high')}
-          ${statTile('Средняя', st.mid, 'lv-mid')}
-          ${statTile('Низкая', st.low, 'lv-low')}
+          ${statTile('Средняя надежность', st.mid, 'lv-mid')}
+          ${statTile('Низкая надежность', st.low, 'lv-low')}
         </section>
 
         <section class="reg-tools">
