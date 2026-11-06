@@ -1,0 +1,8 @@
+# Netlify CLI local state
+.netlify/
+.vercel
+node_modules/
+.env
+.env.*
+!.env.example
+.data/
